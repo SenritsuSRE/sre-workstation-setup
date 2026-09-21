@@ -19,19 +19,16 @@ SREにとって、課題と感じるのは、ツールの導入数でも、設�
 
 ---
 
-## Goal / 目指す環境
+## Goal / 目指す環境（開発・運用ワークフロー）
 
 ```mermaid
 flowchart TD
-    A[Windows Terminal] --> B[WSL2]
-    B --> C[Ubuntu 24.04 LTS]
-    C --> D[zsh]
-    D --> E[Starship Prompt]
-    E --> F[fzf & AWS Profile Switcher]
-    F --> G[AWS CLI]
-    G --> H[GitHub]
-    H --> I[Claude Code Bedrock]
-    I --> J[AWS CDK / TypeScript / Biome]
+    Developer[開発者 / 人間] -->|設計意図の統制| Workstation[SRE Workstation<br/>Safety & Control]
+    Workstation -->|AWS操作 / 認証管理| AWS[AWS Cloud]
+    Workstation -->|コード管理 / 連携| GitHub[GitHub Repository]
+    Workstation -->|AI支援の活用| Claude[Claude Code Bedrock]
+    AWS -->|インフラ構築| CDK[AWS CDK / TypeScript]
+    CDK -->|コード整形・品質担保| Biome[Biome]
 ```
 
 ---
@@ -82,17 +79,43 @@ Biome
 
 ```mermaid
 flowchart TD
-    A[Windows Terminal] --> B[WSL2]
-    B --> C[Ubuntu 24.04 LTS]
-    C --> D[zsh]
-    D --> E[Starship]
-    E --> F[fzf]
-    F --> G[AWS Profile Switcher]
-    G --> H[AWS CLI]
-    H --> I[GitHub]
-    I --> J[Claude Code]
-    J --> K[AWS CDK / TypeScript]
-    K --> L[Biome]
+    subgraph Host [ホスト環境]
+        direction TB
+        subgraph Win [Windows 11]
+            WT[Windows Terminal] --> WSL[WSL2]
+            WSL --> U24[Ubuntu 24.04 LTS]
+        end
+        subgraph Mac [macOS]
+            Terminal[Terminal / iTerm2] --> HB[Homebrew]
+        end
+    end
+
+    subgraph Shell [ログインシェル]
+        direction TB
+        Zsh[zsh]
+    end
+
+    subgraph Tools [シェル内部の標準ツール・CLI群]
+        direction TB
+        Starship[Starship Prompt]
+        Fzf[fzf]
+        ASP[AWS Profile Switcher]
+        AWSCLI[AWS CLI]
+        Git[Git / GitHub SSH]
+        Claude[Claude Code]
+    end
+
+    subgraph Dev [開発・IaCレイヤー]
+        direction TB
+        Node[Node.js LTS]
+        CDK[AWS CDK / TypeScript]
+        Biome[Biome]
+    end
+
+    Win --> Zsh
+    Mac --> Zsh
+    Zsh --> Tools
+    Tools --> Dev
 ```
 
 
