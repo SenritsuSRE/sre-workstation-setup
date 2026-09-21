@@ -80,6 +80,7 @@ Biome
 
 # Architecture
 
+```mermaid
 flowchart TD
     A[Windows Terminal] --> B[WSL2]
     B --> C[Ubuntu 24.04 LTS]
